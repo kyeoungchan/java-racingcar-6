@@ -6,7 +6,6 @@ import racingcar.domain.SingleRoundResultDto;
 import racingcar.util.Consts;
 import racingcar.util.Sentence;
 
-import java.math.BigInteger;
 import java.util.List;
 
 public class OutputView {
@@ -28,21 +27,22 @@ public class OutputView {
         System.out.print(Sentence.ALIGN_LINE.getMessage());
         System.out.println(Sentence.RESULT_START_MENTION.getMessage());
 
-        long round = Consts.FIRST_ROUND;
-        long finalRound = resultDto
-                .getFinalRound()
-                .longValue();
+        int round = Consts.FIRST_ROUND;
+        int finalRound = resultDto.getFinalRound();
 
         while (round <= finalRound) {
-            SingleRoundResultDto singleRoundResultDto = resultDto
-                    .getSingleRoundResultDto(BigInteger.valueOf(round));
-            long carNumbers = singleRoundResultDto.getCarNumbers();
-            for (int index = 0; index < carNumbers; index++) {
-                Car.CarResultDto carResult = singleRoundResultDto.getCarResultDto(index);
-                System.out.println(carResult);
-            }
+            SingleRoundResultDto singleRoundResultDto = resultDto.getSingleRoundResultDto(round);
+            printCarResultsPerSingleRound(singleRoundResultDto);
             round ++;
             System.out.print(Sentence.ALIGN_LINE.getMessage());
+        }
+    }
+
+    private static void printCarResultsPerSingleRound(SingleRoundResultDto singleRoundResultDto) {
+        int carNumbers = singleRoundResultDto.getCarNumbers();
+        for (int index = 0; index < carNumbers; index++) {
+            Car.CarResultDto carResult = singleRoundResultDto.getCarResultDto(index);
+            System.out.println(carResult);
         }
     }
 
@@ -68,8 +68,7 @@ public class OutputView {
         }
     }
 
-    private static boolean checkNotLastWinner(int finalWinnerNumber, int i) {
-        return i < finalWinnerNumber - 1;
+    private static boolean checkNotLastWinner(int finalWinnerNumber, int index) {
+        return index < finalWinnerNumber - 1;
     }
-
 }

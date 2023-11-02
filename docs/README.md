@@ -9,11 +9,11 @@
   - [x] 각 자동차는 처음은 이동 거리가 0으로 세팅돼야한다. Car$createCar(String name)
 - [x] 사용자로부터 몇 번의 이동을 할 것인지 입력받는다. - InputView$inputTryNumber()
   - [x] 숫자로 입력받아야 한다. -> 아니면 `IllegalArgumentException` - ClientValidator$getValidatedBigIntegerValue(String inputtedStringTryNumber)
+  - [x] int형 범위를 초과하는 숫자를 입력 받으면 -> `IllegalArgumentException`
 - [x] 입력받은 시도 횟수만큼 0~9 사이의 무작위 값을 구한 후 4 이상인 경우 전진한다. - Car$raceOneRound()
   - [x] 4 이상의 결과가 나온 수만큼 이동 거리가 1씩 증가된다. - Car$raceOneRound()
   - [x] 자동차 결과는 DTO로 포장해서 반환한다. - Car$createCarResultDto()
 - [x] 자동차들은 리포지토리에 의해 관리된다.
-  - [x] 자동차 이름이 중복되더라도 id 식별자에 의해 관리된다.
 - [x] 리포지토리는 결과를 DTO 형식으로 반환한다.
   - [x] 결과 DTO는 내부에 각 라운드 별 DTO를 담고 있다.
   - [x] 라운드 별 DTO는 자동차별 결과 DTO를 담고 있다.
@@ -44,7 +44,6 @@
 ## 2. RacingService
 ### State
 - CarRepository
-- currentRound
 
 ### Behavior
 - `construct` (CarsDto carsDto, Client client)
@@ -74,40 +73,37 @@
 ### State
 - ResultDto result
 - List<Car> cars
-- BigInteger currentRacingRound
-- BigInteger idProvider
+- int currentRacingRound
 
 ### Behavior
 - `construct`(CarsDto, Client)
-  - `private` void idGenerate()
 - void race() 
   - `private` List<Car.CarResultDto> generateCarResults()
 - ResultDto finishFinalRound()
-  - `private` long calculateMaxDistance()
+  - `private` int calculateMaxDistance()
 - boolean isFinalRound()
 
 ## 6. Car
 ### State
-- BigInteger id
 - String name
-- BigInteger distance
+- int distance
 - CarResultDto
   - String name
-  - long distance
+  - int distance
   - String toString()
 
 ### Behavior
-- Car createCar(BigInteger id, String name)
+- Car createCar(String name)
 - void raceOneRound()
 - CarResultDto createCarResultDto()
 
 ## 7. Client
 ### State
-- BigInteger tryNumber
+- int tryNumber
 
 ### Behavior
 - construct(String inputtedTryNumber)
-- BigInteger getTotalRounds()
+- int getTotalRounds()
 
 ## 8. CarsDto
 ### State
@@ -122,14 +118,14 @@
 ## 9. ResultDto
 ### State
 - Map<BigInteger, SingleRoundResultDto> resultDtoByRound
-- BigInteger finalRound
+- int finalRound
 - List<String> finalWinners
 
 ### Behavior
 - `construct`(BigInteger finalRound)
 - void addSingleRoundResult(BigInteger round, SingleRoundResultDto singleRoundResultDto)
 - int getFinalRound
-- SingleRoundResultDto getSingleRoundResult(BigInteger round)
+- SingleRoundResultDto getSingleRoundResult(int round)
 - void addFinalWinner(String winnerName)
 - List<String> getFinalWinners()
 
@@ -155,9 +151,9 @@
 
 ## 13. ClientValidator extends Validator
 ### Behavior
-- BigInteger getValidatedBigIntegerValue(String inputtedStringTryNumber)
-- `private` BigInteger validateCastToBigInteger(String inputtedString)
-- `private` void validateNaturalNumber(BigInteger value)
+- int getValidatedIntValue(String inputtedStringTryNumber)
+- `private` int validateCastToInt(String inputtedString)
+- `private` void validateNaturalNumber(int value)
 
 ## 14. `Enum` Sentence
 - INPUT_CAR_NAMES("경주할 자동차 이름을 입력하세요.(이름은 쉼표(,) 기준으로 구분)")

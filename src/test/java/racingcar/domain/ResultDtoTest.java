@@ -4,27 +4,30 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static racingcar.util.TestConsts.TOTAL_ROUND;
 
 class ResultDtoTest {
 
-    public static final long TOTAL_ROUND = 3L;
     public static final int FIRST_ROUND = 1;
-    private static BigInteger idProvider = BigInteger.ZERO;
+    public static final int SECOND_ROUND = 2;
+    public static final int THIRD_ROUND = 3;
+    public static final int FOURTH_ROUND = 4;
+    public static final int ONE_HUNDREDTH_ROUND = 100;
+
     private ResultDto resultDto;
 
     @BeforeEach
     @DisplayName("각 테스트 실행 전 데이터 저장")
     void addData() {
         // given
-        resultDto = new ResultDto(BigInteger.valueOf(TOTAL_ROUND));
-        Car pobiCar = Car.createCar(generateId(), "pobi");
-        Car woniCar = Car.createCar(generateId(), "woni");
-        Car junCar = Car.createCar(generateId(), "jun");
+        resultDto = new ResultDto(TOTAL_ROUND);
+        Car pobiCar = Car.createCar("pobi");
+        Car woniCar = Car.createCar("woni");
+        Car junCar = Car.createCar("jun");
 
         // when
         for (int i = FIRST_ROUND; i < TOTAL_ROUND + 1; i++) {
@@ -33,12 +36,8 @@ class ResultDtoTest {
                     woniCar.createCarResultDto(),
                     junCar.createCarResultDto());
             SingleRoundResultDto singleRoundResult = new SingleRoundResultDto(carResults);
-            resultDto.addSingleRoundResult(BigInteger.valueOf(i), singleRoundResult);
+            resultDto.addSingleRoundResult(i, singleRoundResult);
         }
-    }
-
-    private static BigInteger generateId() {
-        return idProvider = idProvider.add(BigInteger.ONE);
     }
 
     @Test
@@ -46,40 +45,39 @@ class ResultDtoTest {
     void getCarResultFromSingleResultDto() {
         // then
         SingleRoundResultDto findSingleRoundDto = resultDto
-                .getSingleRoundResultDto(BigInteger.ONE);
+                .getSingleRoundResultDto(FIRST_ROUND);
         assertThat(findSingleRoundDto)
                 .isExactlyInstanceOf(SingleRoundResultDto.class);
 
         Car.CarResultDto carResult = findSingleRoundDto.getCarResultDto(0);
-        assertThat(carResult.getName()).isEqualTo("pobi");
+        assertThat(carResult.name()).isEqualTo("pobi");
 
         Car.CarResultDto carResult2 = findSingleRoundDto.getCarResultDto(1);
-        assertThat(carResult2.getName()).isEqualTo("woni");
+        assertThat(carResult2.name()).isEqualTo("woni");
 
         Car.CarResultDto carResult3 = findSingleRoundDto.getCarResultDto(2);
-        assertThat(carResult3.getName()).isEqualTo("jun");
+        assertThat(carResult3.name()).isEqualTo("jun");
     }
 
     @Test
     @DisplayName("저장한 순서대로 SingleRoundResultDto들이 저장되어 있다.")
     void getSingleRoundResultDto() {
         // then
-        assertThat(resultDto.getSingleRoundResultDto(BigInteger.valueOf(1)))
+        assertThat(resultDto.getSingleRoundResultDto(FIRST_ROUND))
                 .isNotNull();
-        assertThat(resultDto.getSingleRoundResultDto(BigInteger.valueOf(2)))
+        assertThat(resultDto.getSingleRoundResultDto(SECOND_ROUND))
                 .isNotNull();
-        assertThat(resultDto.getSingleRoundResultDto(BigInteger.valueOf(3)))
+        assertThat(resultDto.getSingleRoundResultDto(THIRD_ROUND))
                 .isNotNull();
     }
 
     @Test
     @DisplayName("저장되지 않은 라운드의 SingleRoundResultDto를 조회하면 null이 반환된다.")
     void ifTryGetNullResult() {
-        assertThat(resultDto.getSingleRoundResultDto(BigInteger.valueOf(4)))
+        assertThat(resultDto.getSingleRoundResultDto(FOURTH_ROUND))
                 .isNull();
-        assertThat(resultDto.getSingleRoundResultDto(BigInteger.valueOf(100)))
+        assertThat(resultDto.getSingleRoundResultDto(ONE_HUNDREDTH_ROUND))
                 .isNull();
-
     }
 
     @Test
